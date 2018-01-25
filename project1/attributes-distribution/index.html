@@ -69,15 +69,18 @@ d3.csv("data.csv", function(error, csv) {
     .enter().append("svg")
       .attr("class", "box")
       .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.bottom + margin.top)
+      .attr("height", (height + margin.bottom + margin.top)*3/2)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .call(chart);
-
-      svg.append("text")
+    var i = 0;
+    svg.append("text")
+      .attr("x", function(d) { 
+        return (width + margin.left + margin.right)*i; })
+      .attr("y", function(d) { return height + margin.bottom + margin.top; })
       .text( function (d) { 
-                  console.log(d);
-                  return "( " + 123 +")"; })
+                  i = i+1;
+                  return "( " + (i-1) +")"; })
       .attr("font-family", "sans-serif")
       .attr("font-size", "20px")
       .attr("fill", "red");
