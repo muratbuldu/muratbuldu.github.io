@@ -37,9 +37,6 @@ var margin = {top: 10, right: 50, bottom: 20, left: 50},
     width = 120 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-var min = Infinity,
-    max = -Infinity;
-
 var chart = d3.box()
     .whiskers(iqr(1.5))
     .width(width)
@@ -64,7 +61,7 @@ d3.csv("data.csv", function(error, csv) {
     data[6].push(x.Col);
     
   });
-  console.log(data);
+
   chart.domain([0, 10]);
 
   var svg = d3.select("body").selectAll("svg")
