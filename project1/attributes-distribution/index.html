@@ -75,8 +75,6 @@ d3.csv("data.csv", function(error, csv) {
       .call(chart);
 
       svg.append("text")
-      .attr("x", function(d) { return width + margin.left + margin.right; })
-      .attr("y", function(d) { return height + margin.bottom + margin.top; })
       .text( function (d) { 
                   console.log(d);
                   return "( " + 123 +")"; })
