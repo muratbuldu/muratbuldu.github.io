@@ -1,16 +1,11 @@
-name,economy (mpg),cylinders,displacement (cc),power (hp),weight (lb),0-60 mph (s),year
-Audi Fox,29,4,98,83,2219,16.5,74
-BMW 2002,26,4,121,113,2234,12.5,70
-Buick Skylark Limited,28.4,4,151,90,2670,16,79
-Chevrolet Cavalier,28,4,112,88,2605,19.6,82
-Chevrolet Vega,20,4,140,90,2408,19.5,72
-Chevrolet Vega,25,4,140,75,2542,17,74
-Chevrolet Woody,24.5,4,98,60,2164,22.1,76
-Chevy C10,13,8,350,145,4055,12,76
-Chevy C20,10,8,307,200,4376,15,70
-Chevy S-10,31,4,119,82,2720,19.4,82
-Chrysler Lebaron Town & Country (Wagon),18.5,8,360,150,3940,13,79
-Chrysler New Yorker Brougham,13,8,440,215,4735,11,73
-Chrysler Newport Royal,13,8,400,190,4422,12.5,72
-Volvo 144EA,19,4,121,112,2868,15.5,73
-Volvo Diesel,30.7,6,145,76,3160,19.6,81
+name,economy (mpg),cylinders,displacement (cc),power (hp),weight (lb),0-60 mph (s)
+Audi Fox,29,4,98,83,2219,16.5
+BMW 2002,26,4,121,113,2234,12.5
+Buick Skylark Limited,28.4,4,151,90,2670,16
+Chevrolet Woody,24.5,4,98,60,2164,22.1
+Chevy S-10,31,4,119,82,2720,19.4
+Chrysler Lebaron Town & Country (Wagon),18.5,8,360,150,3940,13
+Chrysler New Yorker Brougham,13,8,440,215,4735,11
+Chrysler Newport Royal,13,8,400,190,4422,12.5
+Volvo 144EA,19,4,121,112,2868,15.5
+Volvo Diesel,30.7,6,145,76,3160,19.6
