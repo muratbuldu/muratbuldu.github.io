@@ -64,7 +64,7 @@ d3.csv("data.csv", function(error, csv) {
     data[6].push(x.Col);
     
   });
-
+  console.log(data);
   chart.domain([0, 10]);
 
   var svg = d3.select("body").selectAll("svg")
