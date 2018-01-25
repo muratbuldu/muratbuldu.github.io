@@ -80,10 +80,10 @@ d3.csv("data.csv", function(error, csv) {
       .attr("y", function(d) { return height + margin.bottom + margin.top; })
       .text( function (d) { 
                   i = i+1;
-                  return "( " + (i-1) +")"; })
+                  return "(" + (i-1) +")"; })
       .attr("font-family", "sans-serif")
       .attr("font-size", "20px")
-      .attr("fill", "red");
+      .attr("fill", "black");
 });
 
 // Returns a function to compute the interquartile range.
