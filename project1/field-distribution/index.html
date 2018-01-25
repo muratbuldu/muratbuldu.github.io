@@ -77,7 +77,7 @@ function randomData (){
     "Others":5
   };
   return labels.map(function(label){
-    return { label: label, value: values[label] }
+    return { label: label+" ("+values[label]+")", value: values[label] }
   });
 }
 
