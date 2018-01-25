@@ -82,7 +82,8 @@ d3.csv("cars.csv", function(error, cars) {
     .selectAll("path")
       .data(cars)
     .enter().append("path")
-      .attr("d", path);
+      .attr("d", path)
+      .attr("stroke", "#000000");
 
   // Add a group element for each dimension.
   var g = svg.selectAll(".dimension")
