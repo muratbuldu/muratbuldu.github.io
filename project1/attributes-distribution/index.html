@@ -72,23 +72,14 @@ d3.csv("data.csv", function(error, csv) {
       .attr("height", height + margin.bottom + margin.top)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-      .call(chart);
-    var svgContainer = d3.select("body").append("svg")
-                                      .attr("width",200)
-                                      .attr("height",200);
-    var text = svgContainer.selectAll("text")
-                        .data(data)
-                        .enter()
-                        .append("text");
-    var textLabels = text
-                 .attr("x", function(d) { return 1000; })
-                 .attr("y", function(d) { return 1000; })
-                 .text( function (d) { 
+    .append("text")
+      .text( function (d) { 
                   console.log(d.Name);
                   return "( " + d.Name +")"; })
-                 .attr("font-family", "sans-serif")
-                 .attr("font-size", "20px")
-                 .attr("fill", "red");
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "20px")
+      .attr("fill", "red");  
+      .call(chart);
 });
 
 // Returns a function to compute the interquartile range.
