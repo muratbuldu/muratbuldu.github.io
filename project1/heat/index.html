@@ -83,11 +83,10 @@
 </div>
 Order: 
   <select id="order">
-  <option value="hclust">by cluster</option>
   <option value="probecontrast">by probe name and contrast name</option>
   <option value="probe">by probe name</option>
   <option value="contrast">by contrast name</option>
-  <option value="custom">by log2 ratio</option>
+  <option value="custom">by custom</option>
   </select>
   </select>
 <div id="chart" style='overflow:auto; width:960px; height:480px;'></div>
@@ -96,10 +95,10 @@ Order:
 <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 <script type="text/javascript">
 var margin = { top: 250, right: 10, bottom: 50, left: 100 },
-  cellSize=12;
+  cellSize=16;
   col_number=7;
   row_number=83;
-  width = Math.max(cellSize*col_number,400), // - margin.left - margin.right,
+  width = Math.max(cellSize*col_number,240), // - margin.left - margin.right,
   height = cellSize*row_number , // - margin.top - margin.bottom,
   //gridSize = Math.floor(width / 24),
   legendElementWidth = cellSize*2.5,
@@ -108,7 +107,7 @@ var margin = { top: 250, right: 10, bottom: 50, left: 100 },
   hcrow = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83], // change to gene name or probe id
   hccol = [1,2,3,4,5,6,7], // change to gene name or probe id
   rowLabel = ["Hannah Abbott ","Ludo Bagman ","Bathilda Bagshot ","Katie Bell ","Cuthbert Binns","Phineas Nigellus Black","Sirius Black","Amelia Bones ","Susan Bones ","Terry Boot","Lavender Brown","Millicent Bulstrode","Charity Burbage","Frank Bryce","Alecto Carrow","Amycus Carrow","Reginald Cattermole","Mary Cattermole ","Cho Chang ","Penelope Clearwater ","Michael Corner","Vincent Crabbe","Colin Creevey","Fleur Delacour ","Amos Diggory","Albus Dumbledore","Seamus Finnigan","Marcus Flint","Filius Flitwick ","Cornelius Fudge","Gellert Grindelwald ","Godric Gryffindor ","Rubeus Hagrid ","Rolanda Hooch ","Helga Hufflepuff","Hermione Granger","Igor Karkaroff ","Viktor Krum","Silvanus Kettleburn ","Bellatrix Lestrange","Neville Longbottom","Xenophilius Lovegood ","Remus Lupin","Draco Malfoy","Ernie Macmillan","Minerva McGonagall","Cormac McLaggen","Graham Montague","Theodore Nott","Garrick Ollivander ","Pansy Parkinson","Peter Pettigrew ","Antioch Peverell","Irma Pince","Sturgis Podmore ","Poppy Pomfrey ","Harry Potter ","James Potter ","Lily Potter","Quirinus Quirrell","Helena Ravenclaw","Rowena Ravenclaw","Tom Marvolo Riddle","Demelza Robins ","Augustus Rookwood","Thorfinn Rowle ","Albert Runcorn","Newt Scamander ","Rufus Scrimgeour ","Kingsley Shacklebolt","Stanley Shunpike","Aurora Sinistra","Rita Skeeter ","Horace Slughorn","Salazar Slytherin","Hepzibah Smith","Severus Snape","Pomona Sprout","Dean Thomas","Nymphadora Tonks ","Emmeline Vance","Ron Weasley","Oliver Wood"], // change to gene name or probe id
-  colLabel = ['Information Visualization Skill','Statistical Skills','Drawing and Artistic Skills','Computer Usage Skills','Computer Graphics Programming Skills','User Experience Evaluation Skills','Collaboration Skills']; // change to contrast name
+  colLabel = ['Information Visualization Skill','Statistical Skills','Drawing and Artistic Skills','Computer Usage Skills','Computer Graphics Programming S.','User Experience Evaluation S.','Collaboration Skills']; // change to contrast name
 
 d3.tsv("data2.tsv",
 function(d) {
