@@ -73,7 +73,9 @@ d3.csv("data.csv", function(error, csv) {
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .call(chart);
-
+    var svgContainer = d3.select("body").append("svg")
+                                      .attr("width",200)
+                                      .attr("height",200);
     var text = svgContainer.selectAll("text")
                         .data(data)
                         .enter()
