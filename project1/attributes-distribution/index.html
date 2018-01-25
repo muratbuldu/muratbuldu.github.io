@@ -70,13 +70,6 @@ d3.csv("data.csv", function(error, csv) {
       .attr("class", "box")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.bottom + margin.top)
-    .append("text")
-      .text( function (d) { 
-                  console.log(d);
-                  return "( " + 123 +")"; })
-      .attr("font-family", "sans-serif")
-      .attr("font-size", "20px")
-      .attr("fill", "red")
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .call(chart);
