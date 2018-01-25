@@ -64,14 +64,12 @@ d3.csv("data.csv", function(error, csv) {
 
   chart.domain([0, 10]);
 
-  var svg = (d3.select("body").selectAll("svg")
+  var svg = d3.select("body").selectAll("svg")
       .data(data)
     .enter().append("svg")
       .attr("class", "box")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.bottom + margin.top)
-    .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")"))
     .append("text")
       .text( function (d) { 
                   console.log(d);
@@ -79,6 +77,8 @@ d3.csv("data.csv", function(error, csv) {
       .attr("font-family", "sans-serif")
       .attr("font-size", "20px")
       .attr("fill", "red")
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .call(chart);
 });
 
