@@ -58,7 +58,7 @@ var svg = d3.select("body").append("svg")
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+console.log("asdasd");
 d3.csv("cars.csv", function(error, cars) {
 
   // Extract the list of dimensions and create a scale for each.
