@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
+<!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
+<!-- Coding style based on http://gist.github.com/mbostock/5977197 -->
+
+<style>
+body {
+  font: 11px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.dot {
+  stroke: #000;
+}
+
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+}
+</style>
+<body>
+<h1>Neighbor preference may be affected by ...</h1>
+<p>Change the time slot:
+<input type="radio" id="1995"
+     name="year" value="1995" onclick="loadData(1995)">
+    <label for="1995">1995-2000</label>
+<input type="radio" id="2000"
+     name="year" value="2000" onclick="loadData(2000)">
+    <label for="2000">2000-2005</label>
+<input type="radio" id="2005"
+     name="year" value="2005" onclick="loadData(2005)">
+    <label for="2005">2005-2010</label>
+<input type="radio" id="2010"
+     name="year" value="2010" onclick="loadData(2010)" checked>
+    <label for="2010">2010-2014</label>
+</p>
+<p>Choose x axis:
+<input type="radio" id="aids"
+     name="neig" value="aids" onclick="changeNeig('aids')" checked>
+    <label for="aids">Aids</label>
+<input type="radio" id="drinker"
+     name="neig" value="drinker" onclick="changeNeig('drinker')">
+    <label for="drinker">Heavy Drinker</label>
+<input type="radio" id="drug"
+     name="neig" value="drug" onclick="changeNeig('drug')">
+    <label for="drug">Drug Addicts</label>
+<input type="radio" id="homosexuals"
+     name="neig" value="homosexuals" onclick="changeNeig('homosexuals')">
+    <label for="homosexuals">Homosexuals</label>
+<input type="radio" id="immigrants"
+     name="neig" value="immigrants" onclick="changeNeig('immigrants')">
+    <label for="immigrants">Immigrants</label>
+<input type="radio" id="language"
+     name="neig" value="language" onclick="changeNeig('language')">
+    <label for="language">Different Language</label>
+<input type="radio" id="race"
+     name="neig" value="race" onclick="changeNeig('race')">
+    <label for="race">Different Race</label>
+<input type="radio" id="religion"
+     name="neig" value="religion" onclick="changeNeig('religion')">
+    <label for="religion">Different Religion</label>
+<input type="radio" id="unmarried"
+     name="neig" value="unmarried" onclick="changeNeig('unmarried')">
+    <label for="unmarried">Unmarried Couples</label>
+</p>
+<p>Choose y axis:
+<input type="radio" id="children_per_woman"
+     name="gap" value="children_per_woman" onclick="changeGap('children_per_woman')" checked>
+    <label for="children_per_woman">Children per Woman</label>
+<input type="radio" id="energy_use_per_person"
+     name="gap" value="energy_use_per_person" onclick="changeGap('energy_use_per_person')">
+    <label for="energy_use_per_person">Energy Use per Person</label>
+<input type="radio" id="income_per_person"
+     name="gap" value="income_per_person" onclick="changeGap('income_per_person')">
+    <label for="income_per_person">Income per Person</label>
+<input type="radio" id="Internet_user_per_100"
+     name="gap" value="Internet_user_per_100" onclick="changeGap('Internet_user_per_100')">
+    <label for="Internet_user_per_100">Internet Users</label>
+<input type="radio" id="life_expectancy"
+     name="gap" value="life_expectancy" onclick="changeGap('life_expectancy')">
+    <label for="life_expectancy">Life Expectancy</label>
+<input type="radio" id="population"
+     name="gap" value="population" onclick="changeGap('population')">
+    <label for="population">Population</label>
+<input type="radio" id="population_growth"
+     name="gap" value="population_growth" onclick="changeGap('population_growth')">
+    <label for="population_growth">Population Growth</label>
+</p>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://d3js.org/d3-queue.v3.min.js"></script>
+<script>
+
+var margin = {top: 20, right: 20, bottom: 30, left: 100},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+var year = 2010;
+var g = [];
+var neig_title = {
+  "aids": "Aids",
+  "drinker": "Heavy Drinker",
+  "drug": "Drug Addicts",
+  "homosexuals": "Homosexuals",
+  "immigrants": "Immigrants",
+  "language": "Different Language",
+  "race": "Different Race",
+  "religion": "Different Religion",
+  "unmarried": "Unmarried Couples"
+};
+var gap_title = {
+  "children_per_woman": "Children per Woman",
+  "energy_use_per_person": "Energy Use per Person",
+  "income_per_person": "Income per Person",
+  "Internet_user_per_100": "Internet Users",
+  "life_expectancy": "Life Expectancy",
+  "population": "Population",
+  "population_growth": "Population Growth"
+};
+var neigVar = "aids";
+var gapVar = "children_per_woman";
+// population problem...
+
+// setup x 
+var xValue = function(d) { return d.Mentioned/(d.Mentioned+d.Not);}, // data -> value
+    xScale = d3.scale.linear().range([0, width]), // value -> display
+    xMap = function(d) { return xScale(xValue(d));}, // data -> display
+    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+// setup y
+var yValue = function(d) { 
+    result = 0;
+    g.forEach(function(k){
+      if(k["Country"]==d["Country"]){
+        result = k[year];
+        return;
+      }
+    });
+    return result;}, // data -> value
+    yScale = d3.scale.linear().range([height, 0]), // value -> display
+    yMap = function(d) { return yScale(yValue(d));}, // data -> display
+    yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+// setup fill color
+var cValue = function(d) { return continent[d.Country];},
+    color = d3.scale.category10();
+
+
+function loadData(y){
+  year = y;
+  if(document.getElementsByTagName("svg")[0]){
+    document.getElementsByTagName("svg")[0].parentNode.removeChild(document.getElementsByTagName("svg")[0]);
+  }
+  var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// add the tooltip area to the webpage
+var tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+  // load data
+  d3.queue()
+    .defer(d3.csv, "csv/"+neigVar+"/"+year+".csv")
+    .defer(d3.csv, "gap/"+gapVar+".csv")
+    .await(function(error, neig, gap) {
+      g = gap;
+      // change string (from CSV) into number format
+      neig.forEach(function(d) {
+        d.Mentioned = +d.Mentioned;
+        d.Not = +d.Not;
+      });
+      gap.forEach(function(d) {
+        d["1995"] = +d["1995"];
+        d["2000"] = +d["2000"];
+        d["2005"] = +d["2005"];
+        d["2010"] = +d["2010"];
+      });
+      // don't want dots overlapping axis, so add in buffer to data domain
+      xScale.domain([d3.min(neig, xValue)-1, d3.max(neig, xValue)+1]);
+      yScale.domain([d3.min(gap, yValue)-1, d3.max(gap, yValue)+1]);
+
+      // x-axis
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis)
+        .append("text")
+          .attr("class", "label")
+          .attr("x", width)
+          .attr("y", -6)
+          .style("text-anchor", "end")
+          .text(neig_title[neigVar]);
+
+      // y-axis
+      svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+        .append("text")
+          .attr("class", "label")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text(gap_title[gapVar]);
+
+      // draw dots
+      svg.selectAll(".dot")
+          .data(neig)
+        .enter().append("circle")
+          .attr("class", "dot")
+          .attr("r", 3.5)
+          .attr("cx", xMap)
+          .attr("cy", yMap)
+          .style("fill", function(d) { return color(cValue(d));}) 
+          .on("mouseover", function(d) {
+              tooltip.transition()
+                   .duration(200)
+                   .style("opacity", .9);
+              tooltip.html(d["Country"] + "<br/> (" + xValue(d) 
+              + ", " + yValue(d) + ")")
+                   .style("left", (d3.event.pageX + 5) + "px")
+                   .style("top", (d3.event.pageY - 28) + "px");
+          })
+          .on("mouseout", function(d) {
+              tooltip.transition()
+                   .duration(500)
+                   .style("opacity", 0);
+          })
+          .on("click", function(d,i){
+            console.log(d);
+            console.log(neig[i])
+          });
+
+      // draw legend
+      var legend = svg.selectAll(".legend")
+          .data(color.domain())
+        .enter().append("g")
+          .attr("class", "legend")
+          .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
+          .on("click",function(d){
+            // filter?
+            console.log(d);
+          });
+
+      // draw legend colored rectangles
+      legend.append("rect")
+          .attr("x", width - 18)
+          .attr("width", 18)
+          .attr("height", 18)
+          .style("fill", color);
+
+      // draw legend text
+      legend.append("text")
+          .attr("x", width - 24)
+          .attr("y", 9)
+          .attr("dy", ".35em")
+          .style("text-anchor", "end")
+          .text(function(d) { return d;})
+
+    });
+}
+
+loadData(year);
+
+function changeNeig(n){
+  neigVar = n;
+  loadData(year);
+}
+function changeGap(g){
+  gapVar = g;
+  loadData(year);
+}
+var continent = {
+  "Argentina": "South America",
+  "Australia": "Oceania",
+  "Brazil": "South America",
+  "Belarus": "Europe",
+  "Chile": "South America",
+  "China": "East Asia",
+  "Taiwan": "Asia",
+  "Colombia": "South America",
+  "Estonia": "Europe",
+  "Georgia": "Asia",
+  "Germany": "Europe",
+  "India": "Asia",
+  "Jordan": "Asia",
+  "South Korea": "Asia",
+  "Mexico": "North America",
+  "Morocco": "Africa",
+  "Netherlands": "Europe",
+  "New Zealand": "Oceania",
+  "Nigeria": "Africa",
+  "Peru": "South America",
+  "Philippines": "Asia",
+  "Poland": "Europe",
+  "Romania": "Europe",
+  "Russia": "Europe",
+  "Slovenia": "Europe",
+  "South Africa": "Africa",
+  "Spain": "Europe",
+  "Sweden": "Europe",
+  "Turkey": "Europe",
+  "Ukraine": "Europe",
+  "United States": "North America",
+  "Uruguay": "South America"
+};
+//^(?!(Country|Argentina|Australia|Brazil|Belarus|Chile|China|Taiwan|Colombia|Estonia|Georgia|Germany|India|Jordan|South Korea|Mexico|Morocco|Netherlands|New Zealand|Nigeria|Peru|Philippines|Poland|Romania|Russia|Slovenia|South Africa|Spain|Sweden|Turkey|Ukraine|United States|Uruguay)).*$
+// d3.queue()
+// .defer(d3.csv, "csv/aids/2000.csv")
+// .defer(d3.csv, "csv/drinker/2000.csv")
+// .defer(d3.csv, "csv/drug/2000.csv")
+// .defer(d3.csv, "csv/homosexuals/2000.csv")
+// .defer(d3.csv, "csv/immigrants/2000.csv")
+// .defer(d3.csv, "csv/language/2000.csv")
+// .defer(d3.csv, "csv/race/2000.csv")
+// .defer(d3.csv, "csv/religion/2000.csv")
+// .defer(d3.csv, "csv/unmarried/2000.csv")
+// .await(function(error, aids, drinker,drug,homosexuals,immigrants,language,race,religion,unmarried) {
+//     if (error) {
+//         console.error('Oh dear, something went wrong: ' + error);
+//     }
+//     else {
+//         var data = {"name":"root", "children":[]};
+        
+//         var m = {
+//           "aids": aids,
+//           "heavy drinker": drinker,
+//           "drug addict": drug,
+//           "different race": race,
+//           "immigrant": immigrants,
+//           "homosexual": homosexuals,
+//           "different religion": religion,
+//           "unmarried couple": unmarried,
+//           "different language": language
+//         };
+//         for(var key in m){
+//           var f = m[key];
+//           var holder = [];
+//           var index = {};
+//           f.forEach((item)=>{
+//             if(!index[continent[item.Country]] && index[continent[item.Country]]!=0){
+//               index[continent[item.Country]] = holder.length;
+//               holder.push({"name":continent[item.Country],"children":[]});
+//             }
+//             holder[index[continent[item.Country]]].children.push({"name":item.Country,"size":(100*parseInt(item.Mentioned)/(parseInt(item.Mentioned)+parseInt(item.Not)))});
+//           });
+//           data.children.push({"name":key,"children":holder});
+//         }
+//         var result = JSON.stringify(data);
+//         document.getElementById("p1").innerHTML = result;
+//         console.log(data);
+//     }
+// });
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
