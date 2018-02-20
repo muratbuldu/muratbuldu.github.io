@@ -96,6 +96,7 @@ body {
 <input type="radio" id="population_growth"
      name="gap" value="population_growth" onclick="changeGap('population_growth')">
     <label for="population_growth">Population Growth</label>
+<button onclick="reset()">Reset Graphic</button>
 </p>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="https://d3js.org/d3-queue.v3.min.js"></script>
@@ -106,6 +107,7 @@ var margin = {top: 20, right: 20, bottom: 30, left: 100},
     height = 500 - margin.top - margin.bottom;
 var year = 2010;
 var g = [];
+var restirected = "";
 var neig_title = {
   "aids": "Aids",
   "drinker": "Heavy Drinker",
@@ -131,7 +133,7 @@ var gapVar = "children_per_woman";
 // population problem...
 
 // setup x 
-var xValue = function(d) { return d.Mentioned/(d.Mentioned+d.Not);}, // data -> value
+var xValue = function(d) { return d.Mentioned/(d.Mentioned+d.Not)*100;}, // data -> value
     xScale = d3.scale.linear().range([0, width]), // value -> display
     xMap = function(d) { return xScale(xValue(d));}, // data -> display
     xAxis = d3.svg.axis().scale(xScale).orient("bottom");
@@ -214,10 +216,18 @@ var tooltip = d3.select("body").append("div")
           .attr("dy", ".71em")
           .style("text-anchor", "end")
           .text(gap_title[gapVar]);
-
+      var data = neig;
+      if(restirected!=""){
+        data = [];
+        neig.forEach(function(k){
+          if(continent[k["Country"]]==restirected){
+            data.push(k);
+          }
+        });
+      }
       // draw dots
       svg.selectAll(".dot")
-          .data(neig)
+          .data(data)
         .enter().append("circle")
           .attr("class", "dot")
           .attr("r", 3.5)
@@ -250,8 +260,8 @@ var tooltip = d3.select("body").append("div")
           .attr("class", "legend")
           .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
           .on("click",function(d){
-            // filter?
-            console.log(d);
+            restirected = d;
+            loadData(year);
           });
 
       // draw legend colored rectangles
@@ -282,6 +292,11 @@ function changeGap(g){
   gapVar = g;
   loadData(year);
 }
+function reset(){
+  restirected = "";
+  loadData(year); 
+}
+
 var continent = {
   "Argentina": "South America",
   "Australia": "Oceania",
